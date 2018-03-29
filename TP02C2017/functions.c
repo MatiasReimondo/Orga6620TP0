@@ -5,8 +5,6 @@
 #include <stdlib.h>
 
 
-
-
 int in_out(FILE *fr, FILE *fw){
     char input_char;
     int num_read = 0;

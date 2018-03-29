@@ -1,0 +1,2 @@
+Compilado con la linea
+gcc *c -o tp0
