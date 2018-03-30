@@ -4,7 +4,7 @@
 #include <errno.h>
 
 int parse_arguments(int argc, char *argv[]){
-    int option, linesFlag = 0, wordsFlag = 0, charFlag = 0;
+    int option, linesFlag = 0, wordsFlag = 0, charFlag = 0, file_flag =0;
     FILE *fr;
     int exe_code = 0;
     option = getopt(argc,argv,OPTIONS);
@@ -12,10 +12,12 @@ int parse_arguments(int argc, char *argv[]){
         switch(option){
             case 'V':
                 versionDisplay();
-                break;
+                exe_code = 0;
+                return exe_code;
             case 'h':
                 helpDisplay();
-                break;
+                exe_code = 0;
+                return exe_code;
             case 'l':
                 linesFlag = 1;
                 break;
@@ -26,12 +28,13 @@ int parse_arguments(int argc, char *argv[]){
                 charFlag = 1;
                 break;
             case 'i':
+                file_flag = 1;
                 errno = 0;
                 fr = fopen(optarg,"r");
                 if(errno != 0){
                     printf("No se pudo abrir el archivo \n");
-                    fclose(fr);
-                    return ERROR_NO_FILE;
+                    exe_code = ERROR_NO_FILE;
+                    return exe_code;
                 }
                 break;
             default:
@@ -40,6 +43,16 @@ int parse_arguments(int argc, char *argv[]){
                 break;
         }
         option = getopt(argc,argv,OPTIONS);
+    }
+    if(!file_flag){
+        printf("Debe ingresar un archivo con la opcion -i \n");
+        exe_code = NO_FILE_OPTION;
+        return exe_code;
+    }
+    if(!linesFlag && !charFlag && !wordsFlag){
+        printf("Debe ingresar alguna opcion validad -l -w -c \n");
+        exe_code = NO_VALID_ARGS;
+        return exe_code;
     }
     if(exe_code != FALSE_ARGS){
         exe_code = read_text(linesFlag,wordsFlag,charFlag,fr);
@@ -72,6 +85,9 @@ int read_text(int lineFlag, int wordFlag, int charFlag, FILE *fr){
             return COUNTER_OUT_OF_RANGE;
         }
 
+    }
+    if(isalpha(last_read)){
+        words_read++;
     }
     if(lineFlag){
         printf("Lines: %llu \n",lines_read);

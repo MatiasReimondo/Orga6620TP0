@@ -6,6 +6,8 @@
 #define ERROR_NO_FILE -1
 #define FALSE_ARGS -2
 #define COUNTER_OUT_OF_RANGE -3
+#define NO_VALID_ARGS -4
+#define NO_FILE_OPTION -5
 
 
 //lista de caracteres legales en este caso tomamos en cuenta numeros y apostrofe
