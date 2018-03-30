@@ -65,10 +65,12 @@ int parse_arguments(int argc, char *argv[]){
 // Explico paso a paso lo que hice asi mas o menos se entiende
 int read_text(int lineFlag, int wordFlag, int charFlag, FILE *fr){
     unsigned long long max_range = 18446744073709551600ULL;
-    char input_char;                                            //Caracter que se leera del archivo
-    char last_read = ' ';                                       //Ultimo caracter leido
+    unsigned char input_char;                                            //Caracter que se leera del archivo
+    unsigned char last_read = ' ';                                       //Ultimo caracter leido
     unsigned long long lines_read = 0, words_read = 0, chars_read = 0; //Contadores unsigned long long range 0 a +18,446,744,073,709,551,615
-    while((input_char = getc(fr)) != EOF){
+    int flagfile;
+    while((flagfile = getc(fr)) != EOF){
+        input_char = flagfile;
         chars_read++;                                           // Cada vez que lee un caracter aumenta la cantidad de caracteres
         if(!isalpha(input_char)){                               // si el caracter no es alfabetico
             if((!is_valid_char(input_char)) && (isalpha(last_read))){ // y ademas no es un caracter valido (excepciones del texto) y el ultimo leido es alfabetico
