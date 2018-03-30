@@ -90,7 +90,7 @@ int read_text(int lineFlag, int wordFlag, int charFlag, FILE *fr){
         }
 
     }
-    if (last_read!= '\n') {
+    if ((last_read != '\n' )&& (chars_read!= 0)) {
         lines_read++;
     }
 
