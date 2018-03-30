@@ -9,10 +9,6 @@
 #define NO_VALID_ARGS -4
 #define NO_FILE_OPTION -5
 
-
-//lista de caracteres legales en este caso tomamos en cuenta numeros y apostrofe
-static const char LEGAL_CHARS[] = "1234567890'";
-
 //lista de opciones del programa
 static const char OPTIONS[] = "Vhlwci:";
 

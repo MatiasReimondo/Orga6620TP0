@@ -4,11 +4,6 @@
 	.abicalls
 	.rdata
 	.align	2
-	.type	LEGAL_CHARS, @object
-	.size	LEGAL_CHARS, 12
-LEGAL_CHARS:
-	.ascii	"1234567890'\000"
-	.align	2
 	.type	OPTIONS, @object
 	.size	OPTIONS, 8
 OPTIONS:

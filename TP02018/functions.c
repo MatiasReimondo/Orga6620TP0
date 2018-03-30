@@ -112,8 +112,8 @@ int read_text(int lineFlag, int wordFlag, int charFlag, FILE *fr){
 int versionDisplay(){
     printf("TP0 - Version 1.0 FIUBA 2018\n");
     printf("Alumnos:\n");
-    printf("Pinto, Santiago \n");
-    printf(", Manuel   \n");
+    printf("Pinto, Santiago 96850\n");
+    printf("Llauro, Manuel 95736\n");
     printf("Reimondo, Matias 95899\n");
     printf("\n");
     return 0;
@@ -136,5 +136,7 @@ int helpDisplay(){
     printf("\n");
     return 0;
 }
+
+
 
 

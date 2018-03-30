@@ -4,11 +4,6 @@
 	.abicalls
 	.rdata
 	.align	2
-	.type	LEGAL_CHARS, @object
-	.size	LEGAL_CHARS, 12
-LEGAL_CHARS:
-	.ascii	"1234567890'\000"
-	.align	2
 	.type	OPTIONS, @object
 	.size	OPTIONS, 8
 OPTIONS:
@@ -386,6 +381,10 @@ $L36:
 	lbu	$3,33($fp)
 	li	$2,10			# 0xa
 	beq	$3,$2,$L45
+	lw	$2,56($fp)
+	lw	$3,60($fp)
+	or	$2,$2,$3
+	beq	$2,$0,$L45
 	lw	$2,40($fp)
 	lw	$3,44($fp)
 	addu	$2,$2,1
@@ -440,10 +439,10 @@ $LC11:
 	.ascii	"Alumnos:\n\000"
 	.align	2
 $LC12:
-	.ascii	"Pinto, Santiago \n\000"
+	.ascii	"Pinto, Santiago 96850\n\000"
 	.align	2
 $LC13:
-	.ascii	", Manuel   \n\000"
+	.ascii	"Llauro, Manuel 95736\n\000"
 	.align	2
 $LC14:
 	.ascii	"Reimondo, Matias 95899\n\000"
