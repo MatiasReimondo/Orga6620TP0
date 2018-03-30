@@ -277,14 +277,16 @@ read_text:
 	move	$3,$0
 	sw	$2,40($fp)
 	sw	$3,44($fp)
-	move	$2,$0
-	move	$3,$0
-	sw	$2,48($fp)
-	sw	$3,52($fp)
+	move	$8,$0
+	move	$9,$0
+	sw	$8,48($fp)
+	sw	$9,52($fp)
 	move	$2,$0
 	move	$3,$0
 	sw	$2,56($fp)
 	sw	$3,60($fp)
+	li	$2,1			# 0x1
+	sw	$2,68($fp)
 $L35:
 	lw	$3,108($fp)
 	lw	$2,108($fp)
@@ -295,18 +297,18 @@ $L35:
 	lw	$4,108($fp)
 	la	$25,__srget
 	jal	$31,$25
-	sw	$2,72($fp)
+	sw	$2,76($fp)
 	b	$L39
 $L38:
 	lw	$2,108($fp)
 	lw	$3,0($2)
 	move	$4,$3
 	lbu	$4,0($4)
-	sw	$4,72($fp)
+	sw	$4,76($fp)
 	addu	$3,$3,1
 	sw	$3,0($2)
 $L39:
-	lw	$3,72($fp)
+	lw	$3,76($fp)
 	sw	$3,64($fp)
 	li	$2,-1			# 0xffffffffffffffff
 	bne	$3,$2,$L37
@@ -314,6 +316,8 @@ $L39:
 $L37:
 	lbu	$2,64($fp)
 	sb	$2,32($fp)
+	lbu	$2,32($fp)
+	sb	$2,33($fp)
 	lw	$2,56($fp)
 	lw	$3,60($fp)
 	addu	$2,$2,1
@@ -326,28 +330,11 @@ $L37:
 	addu	$2,$3,$2
 	addu	$2,$2,1
 	lbu	$2,0($2)
-	andi	$2,$2,0x3
-	bne	$2,$0,$L40
-	lb	$2,32($fp)
-	move	$4,$2
-	la	$25,is_valid_char
-	jal	$31,$25
-	bne	$2,$0,$L40
-	lbu	$3,33($fp)
-	lw	$2,_ctype_
-	addu	$2,$3,$2
-	addu	$2,$2,1
-	lbu	$2,0($2)
-	andi	$2,$2,0x3
+	srl	$2,$2,3
+	andi	$2,$2,0x1
 	beq	$2,$0,$L40
-	lw	$2,48($fp)
-	lw	$3,52($fp)
-	addu	$2,$2,1
-	sltu	$4,$2,1
-	addu	$3,$3,$4
-	sw	$2,48($fp)
-	sw	$3,52($fp)
-$L40:
+	li	$2,1			# 0x1
+	sw	$2,68($fp)
 	lbu	$3,32($fp)
 	li	$2,10			# 0xa
 	bne	$3,$2,$L42
@@ -358,12 +345,27 @@ $L40:
 	addu	$3,$3,$4
 	sw	$2,40($fp)
 	sw	$3,44($fp)
+	b	$L42
+$L40:
+	lw	$2,68($fp)
+	sra	$4,$2,31
+	lw	$2,68($fp)
+	move	$3,$4
+	lw	$4,48($fp)
+	lw	$5,52($fp)
+	addu	$8,$4,$2
+	sltu	$6,$8,$2
+	addu	$9,$5,$3
+	addu	$9,$9,$6
+	move	$2,$8
+	move	$3,$9
+	sw	$2,48($fp)
+	sw	$3,52($fp)
+	sw	$0,68($fp)
 $L42:
-	lbu	$2,32($fp)
-	sb	$2,33($fp)
-	lw	$3,60($fp)
-	lw	$2,28($fp)
-	sltu	$2,$2,$3
+	lw	$2,60($fp)
+	lw	$3,28($fp)
+	sltu	$2,$3,$2
 	bne	$2,$0,$L44
 	lw	$3,60($fp)
 	lw	$2,28($fp)
@@ -377,24 +379,20 @@ $L44:
 	la	$4,$LC5
 	la	$25,printf
 	jal	$31,$25
-	li	$3,-3			# 0xfffffffffffffffd
-	sw	$3,68($fp)
+	li	$9,-3			# 0xfffffffffffffffd
+	sw	$9,72($fp)
 	b	$L34
 $L36:
 	lbu	$3,33($fp)
-	lw	$2,_ctype_
-	addu	$2,$3,$2
-	addu	$2,$2,1
-	lbu	$2,0($2)
-	andi	$2,$2,0x3
-	beq	$2,$0,$L45
-	lw	$2,48($fp)
-	lw	$3,52($fp)
+	li	$2,10			# 0xa
+	beq	$3,$2,$L45
+	lw	$2,40($fp)
+	lw	$3,44($fp)
 	addu	$2,$2,1
 	sltu	$4,$2,1
 	addu	$3,$3,$4
-	sw	$2,48($fp)
-	sw	$3,52($fp)
+	sw	$2,40($fp)
+	sw	$3,44($fp)
 $L45:
 	lw	$2,96($fp)
 	beq	$2,$0,$L46
@@ -423,9 +421,9 @@ $L48:
 	la	$4,$LC9
 	la	$25,printf
 	jal	$31,$25
-	sw	$0,68($fp)
+	sw	$0,72($fp)
 $L34:
-	lw	$2,68($fp)
+	lw	$2,72($fp)
 	move	$sp,$fp
 	lw	$31,88($sp)
 	lw	$fp,84($sp)
@@ -433,52 +431,6 @@ $L34:
 	j	$31
 	.end	read_text
 	.size	read_text, .-read_text
-	.align	2
-	.globl	is_valid_char
-	.ent	is_valid_char
-is_valid_char:
-	.frame	$fp,32,$31		# vars= 16, regs= 2/0, args= 0, extra= 8
-	.mask	0x50000000,-4
-	.fmask	0x00000000,0
-	.set	noreorder
-	.cpload	$25
-	.set	reorder
-	subu	$sp,$sp,32
-	.cprestore 0
-	sw	$fp,28($sp)
-	sw	$28,24($sp)
-	move	$fp,$sp
-	move	$2,$4
-	sb	$2,8($fp)
-	sw	$0,12($fp)
-	sw	$0,16($fp)
-$L50:
-	lw	$2,16($fp)
-	sltu	$2,$2,12
-	bne	$2,$0,$L53
-	b	$L51
-$L53:
-	lw	$3,16($fp)
-	la	$2,LEGAL_CHARS
-	addu	$2,$3,$2
-	lb	$3,8($fp)
-	lb	$2,0($2)
-	bne	$3,$2,$L52
-	li	$2,1			# 0x1
-	sw	$2,12($fp)
-$L52:
-	lw	$2,16($fp)
-	addu	$2,$2,1
-	sw	$2,16($fp)
-	b	$L50
-$L51:
-	lw	$2,12($fp)
-	move	$sp,$fp
-	lw	$fp,28($sp)
-	addu	$sp,$sp,32
-	j	$31
-	.end	is_valid_char
-	.size	is_valid_char, .-is_valid_char
 	.rdata
 	.align	2
 $LC10:

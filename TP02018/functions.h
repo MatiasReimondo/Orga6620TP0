@@ -22,10 +22,6 @@ int parse_arguments(int argc, char *argv[]);
 // Lee el texto y de acuerdo a la flag indicada imprime cantidad de lineas, palabras y caracteres
 int read_text(int lineFlag, int wordFlag, int charFlag , FILE *fr);
 
-//Chequea que un caracter este dentro de los caracteres permitidos
-int is_valid_char(char input_char);
-
-
 //Muestra la descipcion de la version
 int versionDisplay();
 

@@ -69,18 +69,20 @@ int read_text(int lineFlag, int wordFlag, int charFlag, FILE *fr){
     unsigned char last_read = ' ';                                       //Ultimo caracter leido
     unsigned long long lines_read = 0, words_read = 0, chars_read = 0; //Contadores unsigned long long range 0 a +18,446,744,073,709,551,615
     int flagfile;
+    int in_space = 1;
     while((flagfile = getc(fr)) != EOF){
         input_char = flagfile;
+        last_read = input_char;
         chars_read++;                                           // Cada vez que lee un caracter aumenta la cantidad de caracteres
-        if(!isalpha(input_char)){                               // si el caracter no es alfabetico
-            if((!is_valid_char(input_char)) && (isalpha(last_read))){ // y ademas no es un caracter valido (excepciones del texto) y el ultimo leido es alfabetico
-                words_read++;                                   // Suma uno a las palabras
+        if (isspace(input_char)) {                              // Si el caracter leido es un espacio
+            in_space = 1;
+            if (input_char == '\n') {
+                lines_read++;
             }
+        } else {
+            words_read += in_space;                         // Sino es un espacio aumenta en 1 las palabrass y setea in_sppace en 0
+            in_space = 0;
         }
-        if( input_char == '\n') {                           // Si lee un salto de linea aumenta el contador de lineas
-            lines_read++;
-        }
-        last_read = input_char;                         // Asigna el ultimo leido
 
         if(chars_read > max_range){                             // Si se sobrepasa el limite del contador se cierra el programa
             printf("Se ha excedido el rango del contador \n");
@@ -88,9 +90,10 @@ int read_text(int lineFlag, int wordFlag, int charFlag, FILE *fr){
         }
 
     }
-    if(isalpha(last_read)){
-        words_read++;
+    if (last_read!= '\n') {
+        lines_read++;
     }
+
     if(lineFlag){
         printf("Lines: %llu \n",lines_read);
     }
@@ -104,16 +107,6 @@ int read_text(int lineFlag, int wordFlag, int charFlag, FILE *fr){
     return 0;
 }
 
-int is_valid_char(char input_char){
-    int is_valid = 0;
-    int i;
-    for (i = 0; i < sizeof(LEGAL_CHARS) ; ++i) {
-        if(input_char == LEGAL_CHARS[i]){
-            is_valid =1;
-        }
-    }
-    return is_valid;
-}
 
 // Completen con sus nombres
 int versionDisplay(){
