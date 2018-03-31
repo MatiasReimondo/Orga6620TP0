@@ -44,18 +44,17 @@ int parse_arguments(int argc, char *argv[]){
         }
         option = getopt(argc,argv,OPTIONS);
     }
-    if(!file_flag){
-        printf("Debe ingresar un archivo con la opcion -i \n");
-        exe_code = NO_FILE_OPTION;
-        return exe_code;
-    }
     if(!linesFlag && !charFlag && !wordsFlag){
         printf("Debe ingresar alguna opcion validad -l -w -c \n");
         exe_code = NO_VALID_ARGS;
         return exe_code;
     }
-    if(exe_code != FALSE_ARGS){
+    if((exe_code != FALSE_ARGS) && file_flag){
         exe_code = read_text(linesFlag,wordsFlag,charFlag,fr);
+    }
+    if(!file_flag){
+        exe_code = read_text(linesFlag,wordsFlag,charFlag,stdin);
+        return exe_code;
     }
     fclose(fr);
     return exe_code;
