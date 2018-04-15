@@ -25,8 +25,10 @@ unsigned int getCantidadFilas(FILE *fi);
 unsigned int getCantidadColumnas(FILE *fi);
 
 //funcion transponer
-int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida);
+//int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida);
 
+//funcion en assembler MIPS
+extern int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida);
 
 //Muestra la descipcion de la version
 int versionDisplay();

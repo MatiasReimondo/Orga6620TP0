@@ -88,8 +88,9 @@ int load_file(FILE *fi, FILE *fo){
             matrizOrigen[posicion] = numero;
         }
     }
-    trasponer(filas,columnas,matrizOrigen,matrizDestino);
-
+    int prueba =trasponer(filas,columnas,matrizOrigen,matrizDestino);
+    printf("%d \n",prueba);
+    /*
     for (unsigned int k = 0; k <columnas ; ++k) {
         for (unsigned int l = 0; l < filas ; ++l) {
             unsigned int posicion = (k+l*columnas)* sizeLong;
@@ -98,12 +99,14 @@ int load_file(FILE *fi, FILE *fo){
         }
         printf("\n");
     }
+     */
 
     free(matrizOrigen);
     free(matrizDestino);
     return 0;
 }
 
+/*
 int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida){
 
     for (int i = 0; i <filas ; ++i) {
@@ -116,6 +119,7 @@ int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, lon
     return 0;
 
 }
+ */
 
 unsigned int getCantidadFilas(FILE *fi){
     unsigned int filas = 0;
