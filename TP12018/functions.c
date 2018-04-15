@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <malloc.h>
 
+#define SIZE_LONG 2
+
 int parse_arguments(int argc, char *argv[]){
     int option, outputFlag = 0, file_flag =0;
     FILE *fi, *fo;
@@ -81,25 +83,26 @@ int load_file(FILE *fi, FILE *fo){
 
 
     long long numero = 0;
-    for (unsigned int i = 0; i <filas ; ++i) {
-        for (unsigned int j = 0; j <columnas ; ++j) {
-            unsigned int posicion = (i+j*filas)* sizeLong;
+    unsigned int i;
+    unsigned int j;
+    for (i = 0; i <filas ; ++i) {
+        for ( j = 0; j <columnas ; ++j) {
+            unsigned int posicion = (i+j*filas)* SIZE_LONG;
             int scan_result = fscanf(fi,"%lld",&numero);
             matrizOrigen[posicion] = numero;
         }
     }
-    int prueba =trasponer(filas,columnas,matrizOrigen,matrizDestino);
-    printf("%d \n",prueba);
-    /*
-    for (unsigned int k = 0; k <columnas ; ++k) {
-        for (unsigned int l = 0; l < filas ; ++l) {
-            unsigned int posicion = (k+l*columnas)* sizeLong;
+    trasponer(filas,columnas,matrizOrigen,matrizDestino);
+    unsigned int k,l;
+    for ( k = 0; k <columnas ; ++k) {
+        for ( l = 0; l < filas ; ++l) {
+            unsigned int posicion = (k+l*columnas)* SIZE_LONG;
             printf("%lld  ",matrizDestino[posicion]);
 
         }
         printf("\n");
     }
-     */
+
 
     free(matrizOrigen);
     free(matrizDestino);
@@ -108,11 +111,11 @@ int load_file(FILE *fi, FILE *fo){
 
 /*
 int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida){
-
-    for (int i = 0; i <filas ; ++i) {
-        for (int j = 0; j <columnas ; ++j) {
-            unsigned int posicionEntrada = (i+(j*filas))* sizeof(long long);
-            unsigned int posicionSalida = ((i*columnas)+j)* sizeof(long long);
+    int i,j;
+    for (i = 0; i <filas ; ++i) {
+        for (j = 0; j <columnas ; ++j) {
+            unsigned int posicionEntrada = (i+(j*filas))* SIZE_LONG;
+            unsigned int posicionSalida = ((i*columnas)+j)* SIZE_LONG;
             salida[posicionSalida] = entrada[posicionEntrada];
         }
     }
@@ -120,6 +123,7 @@ int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, lon
 
 }
  */
+
 
 unsigned int getCantidadFilas(FILE *fi){
     unsigned int filas = 0;
