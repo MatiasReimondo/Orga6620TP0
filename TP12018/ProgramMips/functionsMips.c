@@ -1,11 +1,12 @@
-#include "functions.h"
+
+#include "functionsMips.h"
 #include <ctype.h>
 #include <getopt.h>
 #include <errno.h>
 #include <stdio.h>
 #include <malloc.h>
 
-#define SIZE_LONG 8
+#define SIZE_LONG 2
 
 int parse_arguments(int argc, char *argv[]){
     int option, outputFlag = 0, file_flag =0;
@@ -76,8 +77,8 @@ int load_file(FILE *fi, FILE *fo){
     unsigned int columnas = getCantidadColumnas(fi);
     unsigned int filasMemory = filas+1;
     unsigned int columnasMemory = columnas+1;
-    long long * matrizOrigen = malloc(filasMemory * columnasMemory * SIZE_LONG); // Reserva el espacio de memoria para la matriz
-    long long * matrizDestino = malloc(columnasMemory * filasMemory * SIZE_LONG);
+    long long * matrizOrigen = malloc(filasMemory * columnasMemory * sizeof(long long)); // Reserva el espacio de memoria para la matriz
+    long long * matrizDestino = malloc(columnasMemory * filasMemory * sizeof(long long));
 
 
 
@@ -122,23 +123,6 @@ int save_file (FILE *fo, unsigned int filas, unsigned int columnas, long long *m
     }
 
 }
-
-
-
-int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida){
-    int i,j;
-    for (i = 0; i <filas ; ++i) {
-        for (j = 0; j <columnas ; ++j) {
-            unsigned int posicionEntrada = (i+(j*filas))* SIZE_LONG;
-            unsigned int posicionSalida = ((i*columnas)+j)* SIZE_LONG;
-            salida[posicionSalida] = entrada[posicionEntrada];
-        }
-    }
-    return 0;
-
-}
-
-
 
 unsigned int getCantidadFilas(FILE *fi){
     unsigned int filas = 0;

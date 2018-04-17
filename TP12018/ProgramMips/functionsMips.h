@@ -1,6 +1,6 @@
 
-#ifndef TP1_FUNCTIONS_H
-#define TP1_FUNCTIONS_H
+#ifndef TP1_FUNCTIONSMIPS_H
+#define TP1_FUNCTIONSMIPS_H
 
 #include <stdio.h>
 
@@ -27,11 +27,8 @@ unsigned int getCantidadFilas(FILE *fi);
 //Obtiene la cantidad de columnas
 unsigned int getCantidadColumnas(FILE *fi);
 
-//funcion transponer
-int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida);
-
 //funcion en assembler MIPS
-//extern int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida);
+extern int trasponer(unsigned int filas, unsigned int columnas, long long *entrada, long long *salida);
 
 //Muestra la descipcion de la version
 int versionDisplay();
@@ -40,4 +37,4 @@ int versionDisplay();
 int helpDisplay();
 
 
-#endif //TP1_FUNCTIONS_H
+#endif //TP1_FUNCTIONSMIPS_H
