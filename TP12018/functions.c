@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
 
 #define SIZE_LONG 8
 
@@ -74,12 +75,13 @@ int parse_arguments(int argc, char *argv[]){
 int load_file(FILE *fi, FILE *fo){
     unsigned int filas = getCantidadFilas(fi);
     unsigned int columnas = getCantidadColumnas(fi);
-    unsigned int filasMemory = filas+1;
-    unsigned int columnasMemory = columnas+1;
-    long long * matrizOrigen = malloc(filasMemory * columnasMemory * SIZE_LONG); // Reserva el espacio de memoria para la matriz
-    long long * matrizDestino = malloc(columnasMemory * filasMemory * SIZE_LONG);
-
-
+    unsigned int filasMemory = filas;
+    unsigned int columnasMemory = columnas;
+    unsigned int sizeOfMemory = filasMemory * columnasMemory * SIZE_LONG *SIZE_LONG;
+    long long * matrizOrigen = malloc(sizeOfMemory); // Reserva el espacio de memoria para la matriz
+    memset(matrizOrigen,0,sizeOfMemory);
+    long long * matrizDestino = malloc(sizeOfMemory);
+    memset(matrizDestino,0,sizeOfMemory);
 
     long long numero = 0;
     unsigned int i;
@@ -184,7 +186,7 @@ int helpDisplay(){
                    "-o, --output  Path to the output file.\n"
                    "-i, --input   Path to the input file.\n"
                    "Examples:\n"
-                   "traspuesta -o - mymatrix\n");
+                   "traspuesta -o -i mymatrix\n");
     printf("\n");
     return 0;
 }

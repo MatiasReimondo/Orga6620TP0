@@ -1,7 +1,7 @@
 #include <mips/regdef.h>
  
 #ifndef SIZE_LONG_LONG
-#define SIZE_LONG_LONG 4
+#define SIZE_LONG_LONG 8
 #endif
  
     .text
@@ -45,12 +45,14 @@ FOR_COLUMNAS:
 TRASPOSE:
     mulou t2, t1, a0			# Guardo en t2 j * filas
     addu  t2, t2, t0			# Sumo t2 a i
-    addi  t3, zero, 16			# seteo t3 en 8
+    addi  t3, zero, SIZE_LONG_LONG			# seteo t3 en 8
+    mulou   t2, t3, t2                  # t2 es la posicion de entrada
     mulou   t2, t3, t2                  # t2 es la posicion de entrada
  
     mulou   t4, t0, a1			# guardo en t4 i * columnas
     addu  t4, t4, t1			# Sumo t4 a j
-    addi  t3, zero, 16
+    addi  t3, zero, SIZE_LONG_LONG
+    mulou   t4, t3, t4                  # t4 es la posicion de salida
     mulou   t4, t3, t4                  # t4 es la posicion de salida
  
     addu  t5, t2, a2			#En t5 sumo t2 y la direccion de memoria	

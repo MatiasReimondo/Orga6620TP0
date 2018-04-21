@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <malloc.h>
 
-#define SIZE_LONG 2
+#define SIZE_LONG 8
 
 int parse_arguments(int argc, char *argv[]){
     int option, outputFlag = 0, file_flag =0;
@@ -73,14 +73,16 @@ int parse_arguments(int argc, char *argv[]){
 
 
 int load_file(FILE *fi, FILE *fo){
-    unsigned int filas = getCantidadFilas(fi);
+unsigned int filas = getCantidadFilas(fi);
     unsigned int columnas = getCantidadColumnas(fi);
-    unsigned int filasMemory = filas+1;
-    unsigned int columnasMemory = columnas+1;
-    long long * matrizOrigen = malloc(filasMemory * columnasMemory * sizeof(long long)); // Reserva el espacio de memoria para la matriz
-    long long * matrizDestino = malloc(columnasMemory * filasMemory * sizeof(long long));
-
-
+    unsigned int filasMemory = filas;
+    unsigned int columnasMemory = columnas;
+    unsigned int sizeOfMemory = filasMemory * columnasMemory * SIZE_LONG *SIZE_LONG;
+    long long * matrizOrigen = malloc(sizeOfMemory); // Reserva el espacio de memoria para la matriz
+    memset(matrizOrigen,0,sizeOfMemory);
+    long long * matrizDestino = malloc(sizeOfMemory);
+    memset(matrizDestino,0,sizeOfMemory);
+  
 
     long long numero = 0;
     unsigned int i;
