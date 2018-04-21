@@ -27,7 +27,7 @@ int parse_arguments(int argc, char *argv[]){
                 outputFlag = 1;
                 fo = fopen(optarg,"w");
                 if(errno != 0){
-                    printf("No se pudo abrir el archivo \n");
+                    fprintf(stderr,"No se pudo abrir el archivo \n");
                     exe_code = ERROR_NO_FILE;
                     return exe_code;
                 }
@@ -37,13 +37,13 @@ int parse_arguments(int argc, char *argv[]){
                 errno = 0;
                 fi = fopen(optarg,"r");
                 if(errno != 0){
-                    printf("No se pudo abrir el archivo \n");
+                    fprintf(stderr,"No se pudo abrir el archivo \n");
                     exe_code = ERROR_NO_FILE;
                     return exe_code;
                 }
                 break;
             default:
-                printf("No existe el comando \n");
+                fprintf(stderr,"No existe el comando \n");
                 exe_code = FALSE_ARGS;
                 return exe_code;
 
@@ -52,7 +52,7 @@ int parse_arguments(int argc, char *argv[]){
     }
     if(!file_flag){
         exe_code = ERROR_NO_FILE;
-        printf("Debe ingresar un archivo de entrada, -h para el menu de ayuda \n");
+        fprintf(stderr,"Debe ingresar un archivo de entrada, -h para el menu de ayuda \n");
         return exe_code;
     }
     if(!outputFlag){
@@ -75,6 +75,11 @@ int parse_arguments(int argc, char *argv[]){
 int load_file(FILE *fi, FILE *fo){
     unsigned int filas = getCantidadFilas(fi);
     unsigned int columnas = getCantidadColumnas(fi);
+    if(!filas | !columnas){
+        fprintf(stderr,"Hubo un error cargando la matriz, probablemente este mal ingresada, revise el archivo de entrada y vuelva a intentarlo \n");
+        return BAD_MATRIX;
+
+    }
     unsigned int filasMemory = filas;
     unsigned int columnasMemory = columnas;
     unsigned int sizeOfMemory = filasMemory * columnasMemory * SIZE_LONG *SIZE_LONG;
@@ -91,7 +96,7 @@ int load_file(FILE *fi, FILE *fo){
             unsigned int posicion = (i+j*filas)* SIZE_LONG;
             int scan_result = fscanf(fi,"%lld",&numero);
             if(scan_result != 1){
-                printf("Hubo un error cargando la matriz, probablemente este mal ingresada, revise el archivo de entrada y vuelva a intentarlo \n");
+                fprintf(stderr,"Hubo un error cargando la matriz, probablemente este mal ingresada, revise el archivo de entrada y vuelva a intentarlo \n");
                 free(matrizOrigen);
                 free(matrizDestino);
                 return BAD_MATRIX;
@@ -117,7 +122,7 @@ int save_file (FILE *fo, unsigned int filas, unsigned int columnas, long long *m
     for ( k = 0; k <columnas ; ++k) {
         for ( l = 0; l < filas ; ++l) {
             unsigned int posicion = (k+l*columnas)* SIZE_LONG;
-            fprintf(fo,"%lld  ",matrix[posicion]);
+            fprintf(fo,"%lld ",matrix[posicion]);
 
         }
         fprintf(fo,"\n");
