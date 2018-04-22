@@ -104,6 +104,7 @@ int load_file(FILE *fi, FILE *fo){
             matrizOrigen[posicion] = numero;
         }
     }
+
     trasponer(filas,columnas,matrizOrigen,matrizDestino);
     save_file(fo,filas,columnas,matrizDestino);
 
@@ -112,7 +113,7 @@ int load_file(FILE *fi, FILE *fo){
     return 0;
 }
 
-int save_file (FILE *fo, unsigned int filas, unsigned int columnas, long long *matrix){
+void save_file (FILE *fo, unsigned int filas, unsigned int columnas, long long *matrix){
 
     unsigned int k,l;
     fprintf(fo,"%d",columnas);

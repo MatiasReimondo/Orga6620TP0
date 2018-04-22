@@ -5,6 +5,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
+
 
 #define SIZE_LONG 8
 
@@ -113,7 +115,7 @@ int load_file(FILE *fi, FILE *fo){
     return 0;
 }
 
-int save_file (FILE *fo, unsigned int filas, unsigned int columnas, long long *matrix){
+void save_file (FILE *fo, unsigned int filas, unsigned int columnas, long long *matrix){
 
     unsigned int k,l;
     fprintf(fo,"%d",columnas);
@@ -124,7 +126,6 @@ int save_file (FILE *fo, unsigned int filas, unsigned int columnas, long long *m
         for ( l = 0; l < filas ; ++l) {
             unsigned int posicion = (k+l*columnas)* SIZE_LONG;
             fprintf(fo,"%lld ",matrix[posicion]);
-
         }
         fprintf(fo,"\n");
     }

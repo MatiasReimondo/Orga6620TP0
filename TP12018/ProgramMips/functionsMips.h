@@ -19,7 +19,7 @@ int parse_arguments(int argc, char *argv[]);
 int load_file(FILE *fi, FILE *fo);
 
 //Guarda la matriz en el archivo selecionado
-int save_file(FILE *fo, unsigned int fila, unsigned int columna, long long * matrix);
+void save_file(FILE *fo, unsigned int fila, unsigned int columna, long long * matrix);
 
 //Obtiene la cantidad de filas
 unsigned int getCantidadFilas(FILE *fi);
