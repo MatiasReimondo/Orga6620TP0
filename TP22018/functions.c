@@ -8,6 +8,7 @@
 #define SIZE_OF_BLOCK 32
 #define BLOCK_NUMBER 16
 #define NO_TAG -2
+#define SETS_CACHE 2
 
 // Estructura de un bloque cache
 // data: son los 32 bytes del bloque
@@ -64,57 +65,76 @@ void init(){
 }
 
 unsigned char read_byte(int address){
-    int bloque_cache = address % BLOCK_NUMBER;
-    int tag = address / BLOCK_NUMBER;
+   // int bloque_cache = extract_index(address,SETS_CACHE,SIZE_OF_BLOCK);
+    //int tag = extract_tag(address,SETS_CACHE,SIZE_OF_BLOCK);
+    int bloque_cache = address%BLOCK_NUMBER;
+    int tag = address/BLOCK_NUMBER;
+    int offset = extract_offset(address,SETS_CACHE,SIZE_OF_BLOCK);
     access = access+ 1;
 
     if((v0[bloque_cache].tag == tag) && (v0[bloque_cache].bit_dirty!= 1)){
         v0[bloque_cache].use_last = 1;                  //Si encuentra en la cache le dato, setea esa via como la ultima usada
         v1[bloque_cache].use_last = 0;                  // y la otra como no
-        return v0[bloque_cache].data[0];
+        return v0[bloque_cache].data[offset];
 
     }else if((v1[bloque_cache].tag == tag) && (v1[bloque_cache].bit_dirty!= 1)){
         v0[bloque_cache].use_last = 0;
         v1[bloque_cache].use_last = 1;
-        return v1[bloque_cache].data[0];
+        return v1[bloque_cache].data[offset];
     }else{
         miss = miss +1;                             //Sino encuentra el dato lo guarda en la que fue menor usada
-        if(v0[bloque_cache].use_last){
-            v1[bloque_cache].data[0] = memory[address];
-            v1[bloque_cache].bit_dirty = 0;
-            v1[bloque_cache].tag = tag;
-        }else {
-            v0[bloque_cache].data[0] = memory[address];
+        if((v0[bloque_cache].bit_dirty!=1) &&(v1[bloque_cache].bit_dirty!=1)){
+            if(v0[bloque_cache].use_last){
+                v1[bloque_cache].data[offset] = memory[address];
+                v1[bloque_cache].bit_dirty = 0;
+                v1[bloque_cache].tag = tag;
+            }else {
+                v0[bloque_cache].data[offset] = memory[address];
+                v0[bloque_cache].bit_dirty = 0;
+                v0[bloque_cache].tag = tag;
+            }
+        }else if(v0[bloque_cache].bit_dirty==1){
+            v0[bloque_cache].data[offset] = memory[address];
             v0[bloque_cache].bit_dirty = 0;
             v0[bloque_cache].tag = tag;
+        }else{
+            v1[bloque_cache].data[offset] = memory[address];
+            v1[bloque_cache].bit_dirty = 0;
+            v1[bloque_cache].tag = tag;
         }
         return -1;
-
     }
 }
 
 int write_byte(int address, unsigned char value){
-    int bloque_cache = address % BLOCK_NUMBER;
-    int tag = address / BLOCK_NUMBER;
+  //  int bloque_cache = extract_index(address,SETS_CACHE,SIZE_OF_BLOCK);
+   // int tag = extract_tag(address,SETS_CACHE,SIZE_OF_BLOCK);
+    int bloque_cache = address%BLOCK_NUMBER;
+    int tag = address/BLOCK_NUMBER;
+    int offset = extract_offset(address,SETS_CACHE,SIZE_OF_BLOCK);
+    access = access+ 1;
 
     if(v0[bloque_cache].tag == tag){
-        v0[bloque_cache].data[0] = value;
+        v0[bloque_cache].data[offset] = value;
         v0[bloque_cache].bit_dirty = 0;
         memory[address] = value;
         return 0;
     }else if(v1[bloque_cache].tag == tag){
-        v1[bloque_cache].data[0] = value;
+        v1[bloque_cache].data[offset] = value;
         v1[bloque_cache].bit_dirty= 0;
         memory[address] = value;
         return 0;
     }else{
         memory[address] = value;
+        miss = miss +1;
         return -1;
     }
 
 }
 
 unsigned int get_miss_rate(){
+    printf("%d \n", miss);
+    printf("%d \n", access);
     unsigned int missRate = (miss*100)/access;
     return missRate;
 }
@@ -173,3 +193,43 @@ void free_cache(){
 
     }
 }
+
+//Usamos operadores de bits para segun el addres que se pasa sacar los tres datos necesarios
+
+
+int ilog2 (int x){
+    int result = 0;
+
+    while (x != 0) {
+        result++;
+        x = x >> 1;
+    }
+    return result;
+}
+
+int extract_tag (int address, int sets, int block_size){
+    int offset_bits = ilog2(block_size);
+    int index_bits = ilog2(sets);
+
+    int tag = address >> (index_bits + offset_bits);
+    return tag;
+}
+
+int extract_index (int address, int sets, int block_size){
+
+    int offset_bits = ilog2(block_size);
+    int index_bits = ilog2(sets);
+
+    int index = (address >> offset_bits) & ((1 << index_bits) - 1);
+    return index;
+}
+
+int extract_offset (int address, int sets, int block_size){
+
+    int offset_bits = ilog2(block_size);
+
+    int offset = address & ((1 << offset_bits) - 1);
+    return offset;
+}
+
+
