@@ -11,7 +11,9 @@
 #define SETS_CACHE 2
 #define MISS_SIGNAL -1
 #define HIT_SIGNAL 0
-
+#define OUT_OF_BOUNDS -3
+#define BAD_ARGS -4
+#define ZERO 0
 // Estructura de un bloque cache
 // data: son los 32 bytes del bloque
 // use last: se va cambiando a medida de que se accede en la lectura 1 o 0 dependiendo de a cual se acceda
@@ -136,7 +138,7 @@ int write_byte(int address, unsigned char value){
 
 }
 
-unsigned int get_miss_rate(){printf("%d \n", MISS_SIGNAL);
+unsigned int get_miss_rate(){
     unsigned int missRate = (miss*100)/access;
     printf("%d \n",missRate);
     return missRate;
@@ -153,7 +155,8 @@ int parse_arguments(int argc, char * argv[]){
     char *argument2 = NULL;
     char *argument3 = NULL;
     if(argc !=2){
-        return 0;
+        printf("Ingrese un nombre valido de archivo \n");
+        return BAD_ARGS;
     }else{
         fi = fopen(argv[1],"r");
         if(errno != 0){
@@ -166,6 +169,10 @@ int parse_arguments(int argc, char * argv[]){
             if(strcmp("W",argument1) == 0){
                 argument2 = strtok(NULL,DELIMITERS);
                 int arg2 = atoi(argument2);
+                if(arg2 > SIZE_OF_MEMORY || arg2 < ZERO){
+                    printf("Direccion de memoria incorrecta \n");
+                    return OUT_OF_BOUNDS;
+                }
                 argument3 = strtok(NULL,DELIMITERS);
                 unsigned char arg3 = (unsigned char) atoi(argument3);
                 write_byte(arg2,arg3);
@@ -173,6 +180,10 @@ int parse_arguments(int argc, char * argv[]){
             if(strcmp("R",argument1) == 0){
                 argument2 = strtok(NULL,DELIMITERS);
                 int arg2 = atoi(argument2);
+                if(arg2 > SIZE_OF_MEMORY || arg2 < ZERO){
+                    printf("Direccion de memoria incorrecta \n");
+                    return OUT_OF_BOUNDS;
+                }
                 read_byte(arg2);
 
             }
