@@ -9,6 +9,8 @@
 #define BLOCK_NUMBER 16
 #define NO_TAG -2
 #define SETS_CACHE 2
+#define MISS_SIGNAL -1
+#define HIT_SIGNAL 0
 
 // Estructura de un bloque cache
 // data: son los 32 bytes del bloque
@@ -65,24 +67,25 @@ void init(){
 }
 
 unsigned char read_byte(int address){
-   // int bloque_cache = extract_index(address,SETS_CACHE,SIZE_OF_BLOCK);
-    //int tag = extract_tag(address,SETS_CACHE,SIZE_OF_BLOCK);
     int bloque_cache = address%BLOCK_NUMBER;
     int tag = address/BLOCK_NUMBER;
     int offset = extract_offset(address,SETS_CACHE,SIZE_OF_BLOCK);
     access = access+ 1;
 
     if((v0[bloque_cache].tag == tag) && (v0[bloque_cache].bit_dirty!= 1)){
-        v0[bloque_cache].use_last = 1;                  //Si encuentra en la cache le dato, setea esa via como la ultima usada
+        v0[bloque_cache].use_last = 1;                  //Si encuentra en la cache el dato, setea esa via como la ultima usada
         v1[bloque_cache].use_last = 0;                  // y la otra como no
+        printf("%u \n",v0[bloque_cache].data[offset]);
         return v0[bloque_cache].data[offset];
 
     }else if((v1[bloque_cache].tag == tag) && (v1[bloque_cache].bit_dirty!= 1)){
         v0[bloque_cache].use_last = 0;
         v1[bloque_cache].use_last = 1;
+        printf("%u \n",v0[bloque_cache].data[offset]);
         return v1[bloque_cache].data[offset];
     }else{
         miss = miss +1;                             //Sino encuentra el dato lo guarda en la que fue menor usada
+        printf("%d \n", MISS_SIGNAL);
         if((v0[bloque_cache].bit_dirty!=1) &&(v1[bloque_cache].bit_dirty!=1)){
             if(v0[bloque_cache].use_last){
                 v1[bloque_cache].data[offset] = memory[address];
@@ -102,13 +105,11 @@ unsigned char read_byte(int address){
             v1[bloque_cache].bit_dirty = 0;
             v1[bloque_cache].tag = tag;
         }
-        return -1;
+        return MISS_SIGNAL;
     }
 }
 
 int write_byte(int address, unsigned char value){
-  //  int bloque_cache = extract_index(address,SETS_CACHE,SIZE_OF_BLOCK);
-   // int tag = extract_tag(address,SETS_CACHE,SIZE_OF_BLOCK);
     int bloque_cache = address%BLOCK_NUMBER;
     int tag = address/BLOCK_NUMBER;
     int offset = extract_offset(address,SETS_CACHE,SIZE_OF_BLOCK);
@@ -118,24 +119,26 @@ int write_byte(int address, unsigned char value){
         v0[bloque_cache].data[offset] = value;
         v0[bloque_cache].bit_dirty = 0;
         memory[address] = value;
+        printf("%d \n",HIT_SIGNAL);
         return 0;
     }else if(v1[bloque_cache].tag == tag){
         v1[bloque_cache].data[offset] = value;
         v1[bloque_cache].bit_dirty= 0;
         memory[address] = value;
+        printf("%d \n",HIT_SIGNAL);
         return 0;
     }else{
         memory[address] = value;
         miss = miss +1;
+        printf("%d \n",MISS_SIGNAL);
         return -1;
     }
 
 }
 
-unsigned int get_miss_rate(){
-    printf("%d \n", miss);
-    printf("%d \n", access);
+unsigned int get_miss_rate(){printf("%d \n", MISS_SIGNAL);
     unsigned int missRate = (miss*100)/access;
+    printf("%d \n",missRate);
     return missRate;
 }
 
@@ -175,9 +178,6 @@ int parse_arguments(int argc, char * argv[]){
             }
             if(strcmp("MR",argument1) == 0){
                 get_miss_rate();
-                printf("%u \n",get_miss_rate());
-
-
             }
         }
         free_cache();
