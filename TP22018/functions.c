@@ -1,8 +1,10 @@
 #include "functions.h"
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+
 
 #define SIZE_OF_MEMORY 4096
 #define SIZE_OF_BLOCK 32
