@@ -26,8 +26,4 @@ int ilog2 (int x);
 int extract_offset (int address, int sets, int block_size);
 
 
-int extract_tag (int address, int sets, int block_size);
-
-int extract_index (int address, int sets, int block_size);
-
 #endif //CACHE_FUNCTIONS_H
