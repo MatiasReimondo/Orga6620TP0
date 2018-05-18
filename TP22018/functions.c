@@ -7,6 +7,7 @@
 
 
 #define SIZE_OF_MEMORY 4096
+#define BLOCKS_MEMORY 128
 #define SIZE_OF_BLOCK 32
 #define BLOCK_NUMBER 16
 #define NO_TAG -2
@@ -26,8 +27,13 @@ struct cache_block{
     int use_last;
 };
 
+struct memory_block{
+    unsigned char * data;
+};
+
 //Memoria principal
-unsigned char * memory;
+struct memory_block mp[BLOCKS_MEMORY];
+
 
 //Cantidad de miss
 unsigned int miss;
@@ -43,7 +49,6 @@ struct cache_block v1[BLOCK_NUMBER];
 
 // Iniciacion de la metadata de la cache y los malloc
 void pre_run(){
-    memory = malloc(SIZE_OF_MEMORY);
     for (int i = 0; i <BLOCK_NUMBER ; ++i) {
         v0[i].data = malloc(SIZE_OF_BLOCK);
         v0[i].bit_dirty = 0;
@@ -53,6 +58,9 @@ void pre_run(){
         v1[i].bit_dirty = 0;
         v1[i].tag = NO_TAG;
         v1[i].use_last = 0;
+    }
+    for (int j = 0; j < BLOCKS_MEMORY ; ++j) {
+        mp[j].data = malloc(SIZE_OF_BLOCK);
     }
 
 }
@@ -71,8 +79,9 @@ void init(){
 }
 
 unsigned char read_byte(int address){
-    int bloque_cache = address%BLOCK_NUMBER;
-    int tag = address/BLOCK_NUMBER;
+    int bloque_memoria = address/SIZE_OF_BLOCK;
+    int bloque_cache = bloque_memoria%BLOCK_NUMBER;
+    int tag = bloque_memoria/BLOCK_NUMBER;
     int offset = extract_offset(address,SETS_CACHE,SIZE_OF_BLOCK);
     access = access+ 1;
 
@@ -92,26 +101,26 @@ unsigned char read_byte(int address){
         printf("%d \n", MISS_SIGNAL);
         if((v0[bloque_cache].bit_dirty!=1) &&(v1[bloque_cache].bit_dirty!=1)){
             if(v0[bloque_cache].use_last){
-                v1[bloque_cache].data[offset] = memory[address];
+                v1[bloque_cache].data = mp[bloque_memoria].data;
                 v1[bloque_cache].bit_dirty = 0;
                 v1[bloque_cache].tag = tag;
                 v1[bloque_cache].use_last = 1;
                 v0[bloque_cache].use_last = 0;
             }else {
-                v0[bloque_cache].data[offset] = memory[address];
+                v0[bloque_cache].data = mp[bloque_memoria].data;
                 v0[bloque_cache].bit_dirty = 0;
                 v0[bloque_cache].tag = tag;
                 v0[bloque_cache].use_last = 1;
                 v1[bloque_cache].use_last = 0;
             }
         }else if(v0[bloque_cache].bit_dirty==1){
-            v0[bloque_cache].data[offset] = memory[address];
+            v0[bloque_cache].data = mp[bloque_memoria].data;
             v0[bloque_cache].bit_dirty = 0;
             v0[bloque_cache].tag = tag;
             v0[bloque_cache].use_last = 1;
             v1[bloque_cache].use_last = 0;
         }else{
-            v1[bloque_cache].data[offset] = memory[address];
+            v1[bloque_cache].data = mp[bloque_memoria].data;
             v1[bloque_cache].bit_dirty = 0;
             v1[bloque_cache].tag = tag;
             v1[bloque_cache].use_last = 1;
@@ -122,25 +131,27 @@ unsigned char read_byte(int address){
 }
 
 int write_byte(int address, unsigned char value){
-    int bloque_cache = address%BLOCK_NUMBER;
-    int tag = address/BLOCK_NUMBER;
+    int bloque_memoria = address/SIZE_OF_BLOCK;
+    int bloque_cache = bloque_memoria%BLOCK_NUMBER;
+    int tag = bloque_memoria/BLOCK_NUMBER;
     int offset = extract_offset(address,SETS_CACHE,SIZE_OF_BLOCK);
+
     access = access+ 1;
 
     if(v0[bloque_cache].tag == tag){
         v0[bloque_cache].data[offset] = value;
         v0[bloque_cache].bit_dirty = 0;
-        memory[address] = value;
+        mp[bloque_memoria].data[offset] = value;
         printf("%d \n",HIT_SIGNAL);
         return 0;
     }else if(v1[bloque_cache].tag == tag){
         v1[bloque_cache].data[offset] = value;
         v1[bloque_cache].bit_dirty= 0;
-        memory[address] = value;
+        mp[bloque_memoria].data[offset] = value;
         printf("%d \n",HIT_SIGNAL);
         return 0;
     }else{
-        memory[address] = value;
+        mp[bloque_memoria].data[offset] = value;
         miss = miss +1;
         printf("%d \n",MISS_SIGNAL);
         return -1;
@@ -211,6 +222,9 @@ void free_cache(){
     for (int i = 0; i <BLOCK_NUMBER ; ++i) {
         free(v0[i].data);
         free(v1[i].data);
+    }
+    for (int j = 0; j <BLOCKS_MEMORY ; ++j) {
+        free(mp[j].data);
 
     }
 }
@@ -229,10 +243,8 @@ int ilog2 (int x){
 }
 
 int extract_offset (int address, int sets, int block_size){
-
-    int offset_bits = ilog2(block_size);
-
-    int offset = address & ((1 << offset_bits) - 1);
+    int mask = 31; // En binario 11111
+    int offset = address&mask;
     return offset;
 }
 
