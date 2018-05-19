@@ -141,12 +141,16 @@ int write_byte(int address, unsigned char value){
     if(v0[bloque_cache].tag == tag){
         v0[bloque_cache].data[offset] = value;
         v0[bloque_cache].bit_dirty = 0;
+        v0[bloque_cache].use_last= 1;
+        v1[bloque_cache].use_last = 0;
         mp[bloque_memoria].data[offset] = value;
         printf("%d \n",HIT_SIGNAL);
         return 0;
     }else if(v1[bloque_cache].tag == tag){
         v1[bloque_cache].data[offset] = value;
         v1[bloque_cache].bit_dirty= 0;
+        v1[bloque_cache].use_last= 1;
+        v0[bloque_cache].use_last = 0;
         mp[bloque_memoria].data[offset] = value;
         printf("%d \n",HIT_SIGNAL);
         return 0;
