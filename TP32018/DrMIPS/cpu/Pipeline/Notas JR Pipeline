@@ -1,0 +1,23 @@
+Para modificar el set de instrucciones nos basamos en la pagina
+http://www.mrc.uidaho.edu/mrc/people/jff/digital/MIPSir.html
+De acuerdo a esta pagina
+JR esta codificada de la manera
+
+0000 00ss sss0 0000 0000 0000 0000 1000
+
+Por lo que es del tipo R
+Y sus campos son:
+
+"jr":   
+{
+"type": "R", 
+"args": ["reg"], 
+"fields": 
+{
+"op": 0, "rs": "#1", "rt": "0", "rd": "0", "shamt": 0, "func": 8
+}, 
+"desc": "The jr instruction loads the PC register with a value stored in a register."},
+
+Para modificar le Datapath de pipeline
+
+Se agrega un FOrkReadData1, un MuxJump
