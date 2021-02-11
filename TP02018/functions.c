@@ -45,8 +45,11 @@ int parse_arguments(int argc, char *argv[]){
         option = getopt(argc,argv,OPTIONS);
     }
     if(!linesFlag && !charFlag && !wordsFlag){
-        printf("Debe ingresar alguna opcion validad -l -w -c \n");
+        printf("Debe ingresar alguna opcion validad. Consultar con -h\n");
         exe_code = NO_VALID_ARGS;
+        if(file_flag) {
+          fclose(fr);
+        }
         return exe_code;
     }
     if((exe_code != FALSE_ARGS) && file_flag){
@@ -135,7 +138,3 @@ int helpDisplay(){
     printf("\n");
     return 0;
 }
-
-
-
-
